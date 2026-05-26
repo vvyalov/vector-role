@@ -1,0 +1,6 @@
+---
+# Переменные, которые не должны переопределяться
+vector_config_path: /etc/vector/vector.toml
+vector_service_name: vector
+vector_user: vector
+vector_group: vector

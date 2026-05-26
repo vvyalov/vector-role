@@ -1,0 +1,28 @@
+---
+# Версия Vector для установки
+vector_version: latest
+
+# Порт для Vector API
+vector_api_port: 8686
+
+# Включить API
+vector_enable_api: true
+
+# Источники данных
+vector_sources:
+  demo_logs:
+    type: demo_logs
+    format: apache_common
+    interval: 1
+    count: 10
+
+# Трансформации
+vector_transforms: {}
+
+# Назначения (куда отправлять логи)
+vector_sinks:
+  console:
+    type: console
+    inputs: ["demo_logs"]
+    encoding:
+      codec: text

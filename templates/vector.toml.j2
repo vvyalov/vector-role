@@ -1,0 +1,32 @@
+# {{ ansible_managed }}
+
+[api]
+enabled = {{ vector_enable_api | lower }}
+address = "127.0.0.1:{{ vector_api_port }}"
+
+# Sources
+{% for source_name, source_config in vector_sources.items() %}
+[sources.{{ source_name }}]
+{% for key, value in source_config.items() %}
+{{ key }} = "{{ value }}"
+{% endfor %}
+
+{% endfor %}
+
+# Transforms
+{% for transform_name, transform_config in vector_transforms.items() %}
+[transforms.{{ transform_name }}]
+{% for key, value in transform_config.items() %}
+{{ key }} = "{{ value }}"
+{% endfor %}
+
+{% endfor %}
+
+# Sinks
+{% for sink_name, sink_config in vector_sinks.items() %}
+[sinks.{{ sink_name }}]
+{% for key, value in sink_config.items() %}
+{{ key }} = "{{ value }}"
+{% endfor %}
+
+{% endfor %}
