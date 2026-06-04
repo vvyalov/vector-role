@@ -1,0 +1,62 @@
+---
+- name: Verify Vector installation
+  hosts: all
+  become: yes
+  tasks:
+    - name: Check Vector binary exists
+      stat:
+        path: /usr/local/bin/vector
+      register: vector_binary
+
+    - name: Assert Vector is installed
+      assert:
+        that:
+          - vector_binary.stat.exists
+        success_msg: "✅ Vector binary is present"
+        fail_msg: "❌ Vector binary not found"
+
+    - name: Get Vector version
+      command: /usr/local/bin/vector --version
+      register: vector_version
+      changed_when: false
+
+    - name: Show Vector version
+      debug:
+        msg: "Vector version: {{ vector_version.stdout }}"
+
+    - name: Check Vector config exists
+      stat:
+        path: /etc/vector/vector.toml
+      register: config_file
+
+    - name: Assert config exists
+      assert:
+        that:
+          - config_file.stat.exists
+        success_msg: "✅ Vector config exists"
+        fail_msg: "❌ Vector config not found"
+
+    - name: Validate Vector config
+      command: /usr/local/bin/vector validate --config /etc/vector/vector.toml
+      register: config_validate
+      changed_when: false
+
+    - name: Assert config is valid
+      assert:
+        that:
+          - config_validate.rc == 0
+        success_msg: "✅ Vector config is valid"
+        fail_msg: "❌ Vector config is invalid"
+
+    - name: Check Vector can run
+      command: /usr/local/bin/vector --dry-run --config /etc/vector/vector.toml
+      register: vector_dryrun
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Assert Vector can run
+      assert:
+        that:
+          - vector_dryrun.rc == 0
+        success_msg: "✅ Vector can run with config"
+        fail_msg: "❌ Vector cannot run with config"

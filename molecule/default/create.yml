@@ -1,0 +1,20 @@
+---
+- name: Create Docker containers
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Create Ubuntu container
+      docker_container:
+        name: ubuntu-22.04
+        image: aragast/netology:latest
+        command: sleep infinity
+        privileged: yes
+        state: started
+
+    - name: Create OracleLinux container
+      docker_container:
+        name: oraclelinux-8
+        image: aragast/netology:latest
+        command: sleep infinity
+        privileged: yes
+        state: started

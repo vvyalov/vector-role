@@ -1,0 +1,33 @@
+---
+driver:
+  name: docker
+
+platforms: []
+
+provisioner:
+  name: ansible
+  inventory:
+    host_vars:
+      ubuntu-22.04:
+        ansible_connection: docker
+        ansible_user: root
+      oraclelinux-8:
+        ansible_connection: docker
+        ansible_user: root
+  playbooks:
+    create: create.yml
+    destroy: destroy.yml
+    converge: converge.yml
+    verify: verify.yml
+
+verifier:
+  name: ansible
+
+scenario:
+  name: default
+  test_sequence:
+    - destroy
+    - create
+    - converge
+    - verify
+    - destroy

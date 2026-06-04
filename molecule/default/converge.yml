@@ -1,0 +1,57 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: yes
+  become: yes
+  tasks:
+    - name: Wait for container to be ready
+      wait_for_connection:
+        timeout: 60
+
+    - name: Install dependencies
+      raw: |
+        apt-get update -y && apt-get install -y curl python3
+      when: ansible_os_family == "Debian"
+      changed_when: false
+
+    - name: Install Vector
+      shell: |
+        curl --proto '=https' --tlsv1.2 -sSfL https://sh.vector.dev | bash -s -- -y
+      args:
+        creates: /root/.vector/bin/vector
+
+    - name: Create symlink
+      file:
+        src: /root/.vector/bin/vector
+        dest: /usr/local/bin/vector
+        state: link
+
+    - name: Create config directory
+      file:
+        path: /etc/vector
+        state: directory
+        mode: '0755'
+
+    - name: Create Vector configuration
+      copy:
+        content: |
+          [sources.demo]
+          type = "demo_logs"
+          format = "apache_common"
+
+          [sinks.console]
+          type = "console"
+          inputs = ["demo"]
+          target = "stdout"
+          encoding.codec = "text"
+        dest: /etc/vector/vector.toml
+        mode: '0644'
+
+    - name: Verify Vector installation
+      command: /usr/local/bin/vector --version
+      register: vector_version
+      changed_when: false
+
+    - name: Show Vector version
+      debug:
+        msg: "Vector installed: {{ vector_version.stdout }}"

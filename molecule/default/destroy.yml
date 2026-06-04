@@ -1,0 +1,14 @@
+---
+- name: Destroy Docker containers
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Remove Ubuntu container
+      docker_container:
+        name: ubuntu-22.04
+        state: absent
+
+    - name: Remove OracleLinux container
+      docker_container:
+        name: oraclelinux-8
+        state: absent
