@@ -1,0 +1,43 @@
+---
+- name: Install Vector
+  block:
+    - name: Install dependencies
+      apt:
+        name:
+          - curl
+          - python3
+          - systemd
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Download and install Vector
+      shell: |
+        curl --proto '=https' --tlsv1.2 -sSfL https://sh.vector.dev | bash -s -- -y
+      args:
+        creates: /root/.vector/bin/vector
+
+    - name: Create symlink
+      file:
+        src: /root/.vector/bin/vector
+        dest: /usr/local/bin/vector
+        state: link
+
+    - name: Create config directory
+      file:
+        path: /etc/vector
+        state: directory
+        mode: '0755'
+
+    - name: Deploy Vector configuration
+      template:
+        src: vector.toml.j2
+        dest: /etc/vector/vector.toml
+        mode: '0644'
+      notify: restart vector
+
+    - name: Start and enable Vector
+      systemd:
+        name: vector
+        state: started
+        enabled: yes

@@ -1,0 +1,10 @@
+# Vector configuration
+[sources.demo_logs]
+type = "demo_logs"
+format = "apache_common"
+
+[sinks.console]
+type = "console"
+inputs = ["demo_logs"]
+target = "stdout"
+encoding.codec = "text"

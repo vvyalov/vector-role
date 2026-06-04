@@ -1,0 +1,24 @@
+---
+galaxy_info:
+  role_name: vector_role
+  namespace: vvyalov
+  author: "Vlad Vyalov"
+  description: "Ansible role for installing and configuring Vector observability pipeline"
+  license: "MIT"
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+        - 22.04
+    - name: OracleLinux
+      versions:
+        - "8"
+  galaxy_tags:
+    - vector
+    - observability
+    - logging
+    - metrics
+    - pipeline
+
+dependencies: []
